@@ -25,7 +25,13 @@
         <input type="text" id="lastName" name="lastName" required />
 
         <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required />
+        <input
+          type="email"
+          id="email"
+          name="email"
+          autocomplete="email"
+          required
+        />
 
         <label for="contactNumber">Contact Number:</label>
         <div class="contact-number-container">
@@ -96,15 +102,118 @@
           <option value="cytotechnologist">Cytotechnologist</option>
         </select>
 
-        <label for="physicalOrVirtual">PHYSICAL OR VIRTUAL:</label>
-        <select id="physicalOrVirtual" name="physicalOrVirtual">
+        <div id="pathology-member-option-div" style="display: none">
+          <label for="pathology-member"
+            >PATHOLOGY CONSULTANT IAC MEMBER :</label
+          >
+          <select id="pathology-member" name="pathology-member">
+            <option value="select">--select--</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+
+        <div id="pathology-member-text-div" style="display: none">
+          <label for="pathology-number"
+            >PATHOLOGY CONSULTANT IAC NUMBER :</label
+          >
+          <input
+            type="text"
+            id="pathology-number"
+            name="pathology-number"
+            required
+          />
+        </div>
+
+        <div id="cytotechnologist-member-option-div" style="display: none">
+          <label for="cytotechnologist-member"
+            >CYTOTECHNOLOGIST IAC MEMBER :</label
+          >
+          <select id="cytotechnologist-member" name="cytotechnologist-member">
+            <option value="select">--select--</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+
+        <div id="cytotechnologist-member-text-div" style="display: none">
+          <label for="cytotechnologist-number"
+            >CYTOTECHNOLOGIST IAC NUMBER :</label
+          >
+          <input
+            type="text"
+            id="cytotechnologist-number"
+            name="cytotechnologist-number"
+            required
+          />
+        </div>
+
+        <label for="appearance-mode">PHYSICAL OR VIRTUAL:</label>
+        <select id="appearance-mode" name="appearance-mode">
           <option value="select">--select--</option>
-          <option value="physical">Physical</option>
-          <option value="virtual">Virtual</option>
+          <option value="physicalMode">Physical</option>
+          <option value="virtualMode">Virtual</option>
         </select>
+
+        <div id="physical-conference-type-div" style="display: none">
+          <label for="physical-conference-type">SELECT CONFERENCE TYPE FOR PHYSICAL ATTENDEE :</label>
+          <select id="physical-conference-type" name="physical-conference-type">
+            <option value="select">--select--</option>
+            <option value="Conference">Conference</option>
+            <option value="CMEConference">CME + Conference</option>
+            <option value="ConferenceWorkshop">Conference + Workshop</option>
+            <option value="CMEConferenceWorkshop">
+              CME + Conference + Workshop
+            </option>
+          </select>
+        </div>
+
+        <div id="physical-workshop-div" style="display: none">
+          <label for="physical-workshop">Workshop Topics :</label>
+          <select id="physical-workshop" name="physical-workshop">
+            <option value="select">--select--</option>
+            <option value="Conference">Cervical Cytology</option>
+            <option value="CMEConference">Breast Cytology</option>
+            <option value="ConferenceWorkshop">Cell Block Preparation And Anciliary Techniques </option>
+            <option value="CMEConferenceWorkshop">
+              CME + Conference + Workshop
+            </option>
+          </select>
+        </div>
+
+        <div id="virtual-conference-type-div" style="display: none">
+          <label for="virtual-conference-type">SELECT CONFERENCE TYPE FOR VIRTUAL ATTENDEE :</label>
+          <select id="virtual-conference-type" name="virtual-conference-type">
+            <option value="select">--select--</option>
+            <option value="Conference">Conference</option>
+            <option value="CMEConference">CME + Conference</option>
+          </select>
+        </div>
+
+        <div id="accompanying-person-div" style="display: none">
+          <label for="accompanying-person">Accompanying Person:</label>
+          <input
+            type="text"
+            id="accompanying-person"
+            name="accompanying-person"
+            inputmode="numeric"
+            required
+          />
+        </div>
+
+        <div id="total-price-div" style="display: none">
+          <label for="total-price">Total Price:</label>
+          <input type="text" id="total-price" name="total-price" disabled />
+        </div>
 
         <button type="submit">Submit</button>
       </form>
     </div>
   </body>
+  <script
+    src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+    crossorigin="anonymous"
+  ></script>
+  <script src="./js/script.js" type="module"></script>
 </html>
