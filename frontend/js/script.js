@@ -32,17 +32,17 @@ $(document).ready(function () {
     e.preventDefault();
     const selectedProfession = e.target.value;
     switch (selectedProfession) {
-      case "pathologyConsultant":
+      case "PathologyConsultant":
         hideAllProfessionDiv();
         pathologyMemberOptionDiv.show();
         break;
-      case "resident":
+      case "Resident":
         hideAllProfessionDiv();
         break;
-      case "internationalConsultant":
+      case "InternationalConsultant":
         hideAllProfessionDiv();
         break;
-      case "cytotechnologist":
+      case "Cytotechnologist":
         hideAllProfessionDiv();
         cytotechnologistOptionDiv.show();
         break;
@@ -52,7 +52,7 @@ $(document).ready(function () {
   }
 
   function toggleDiv(isMember, div) {
-    if (isMember === "yes") {
+    if (isMember === "Yes") {
       div.show();
     } else {
       div.hide();
@@ -119,10 +119,52 @@ $(document).ready(function () {
     }
   }
 
+  function calculateTotalAmount() {
+    const currentAppearance = appearanceMode.val();
+    const currentProfession = professionType.val();
+    let currentProfessionSelected = null;
+    let isMember = null;
+    let memberIdentity = null;
+
+    switch (currentProfession) {
+      case "PathologyConsultant":
+        isMember = $("#pathology-member").val();
+        memberIdentity = $("#pathology-number").val();
+        currentProfessionSelected = `${currentProfession}${isMember}`;
+        break;
+      case "Cytotechnologist":
+        isMember = $("#cytotechnologist-member").val();
+        memberIdentity = $("#cytotechnologist-number").val();
+        currentProfessionSelected = `${currentProfession}${isMember}`;
+        break;
+      default:
+        currentProfessionSelected = currentProfession;
+    }
+
+    let currentConferenceType = null;
+    let currentAmount = 0;
+    switch (currentAppearance) {
+      case "physicalMode":
+        currentConferenceType = $("#physical-conference-type").val();
+        currentAmount =
+          physicalMode[currentConferenceType][currentProfessionSelected];
+        break;
+      case "virtualMode":
+        currentConferenceType = $("#virtual-conference-type").val();
+        currentAmount =
+          virtualMode[currentConferenceType][currentProfessionSelected];
+        break;
+      default:
+        currentConferenceType = null;
+    }
+    console.log(currentAmount);
+  }
+
   function toggleAccompanyingAndPrice(shouldShow) {
     if (shouldShow) {
       accompanyingPersonDiv.show();
       totalPriceDiv.show();
+      calculateTotalAmount();
     } else {
       accompanyingPersonDiv.hide();
       totalPriceDiv.hide();
@@ -135,6 +177,13 @@ $(document).ready(function () {
     e.preventDefault();
     const selectedConference = e.target.value;
     switch (selectedConference) {
+      case "CME":
+        toggleAccompanyingAndPrice(true);
+        physicalWorkshopDiv
+          .find("option:first")
+          .prop("selected", true)
+          .change();
+        physicalWorkshopDiv.hide();
       case "Conference":
         toggleAccompanyingAndPrice(true);
         physicalWorkshopDiv
