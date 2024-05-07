@@ -49,6 +49,7 @@ $(document).ready(function () {
       default:
         hideAllProfessionDiv();
     }
+    calculateTotalAmount();
   }
 
   function toggleDiv(isMember, div) {
@@ -57,6 +58,7 @@ $(document).ready(function () {
     } else {
       div.hide();
     }
+    calculateTotalAmount();
   }
 
   function handlePathologyOptionChange(e) {
@@ -73,7 +75,6 @@ $(document).ready(function () {
       return;
     }
     const currentValue = Number(pressedKey);
-    console.log(previousValue, currentValue);
     if (!Number.isNaN(currentValue)) {
       targetEle.val(previousValue + currentValue);
     }
@@ -117,6 +118,7 @@ $(document).ready(function () {
       default:
         hideAllAppearanceMode();
     }
+    calculateTotalAmount();
   }
 
   function calculateTotalAmount() {
@@ -143,21 +145,33 @@ $(document).ready(function () {
 
     let currentConferenceType = null;
     let currentAmount = 0;
+
     switch (currentAppearance) {
       case "physicalMode":
         currentConferenceType = $("#physical-conference-type").val();
+        const currentAccompanying = accompanyingPersonDiv
+          .find("input:first")
+          .val();
+          if(!(currentConferenceType in physicalMode)){
+            return
+          }
         currentAmount =
-          physicalMode[currentConferenceType][currentProfessionSelected];
+          physicalMode[currentConferenceType][currentProfessionSelected] +
+          physicalMode[currentConferenceType].AccompanyingPerPerson *
+            currentAccompanying;
         break;
       case "virtualMode":
         currentConferenceType = $("#virtual-conference-type").val();
+        if(!(currentConferenceType in virtualMode)){
+          return
+        }
         currentAmount =
           virtualMode[currentConferenceType][currentProfessionSelected];
         break;
       default:
         currentConferenceType = null;
     }
-    console.log(currentAmount);
+    totalPriceDiv.find("input:first").val(currentAmount || 0);
   }
 
   function toggleAccompanyingAndPrice(shouldShow) {
@@ -166,6 +180,7 @@ $(document).ready(function () {
       totalPriceDiv.show();
       calculateTotalAmount();
     } else {
+      accompanyingPersonDiv.find("input:first").val(0);
       accompanyingPersonDiv.hide();
       totalPriceDiv.hide();
       physicalWorkshopDiv.find("option:first").prop("selected", true).change();
@@ -231,4 +246,5 @@ $(document).ready(function () {
   appearanceMode.change(handleAppearanceModeChange);
   physicalConferenceDiv.change(handleConferenceChange);
   virtualConferenceDiv.change(handleConferenceChange);
+  accompanyingPersonDiv.focusout(calculateTotalAmount);
 });
