@@ -1,0 +1,12 @@
+{
+  
+  "name": "getepay.pgkit.reactjs",
+  "version": "1.0.1",
+  "description": "For Integrating Getepay's PG on ReactJs.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "getepay",
+  "license": "ISC"
+}
