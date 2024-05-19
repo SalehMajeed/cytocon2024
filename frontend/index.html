@@ -9,9 +9,9 @@
   <body>
     <div class="container">
       <h1>Registration Form</h1>
-      <form action="../backend/register.php" method="post">
+      <form method="post" id="submitForm">
         <label for="title">Title:</label>
-        <select id="title" name="title" required>
+        <select id="title" name="title" >
           <option value="select">--select--</option>
           <option value="mr">Mr.</option>
           <option value="mrs">Ms./Mrs.</option>
@@ -19,10 +19,10 @@
         </select>
 
         <label for="firstName">First Name:</label>
-        <input type="text" id="firstName" name="firstName" required />
+        <input type="text" id="firstName" name="firstName"  />
 
         <label for="lastName">Last Name:</label>
-        <input type="text" id="lastName" name="lastName" required />
+        <input type="text" id="lastName" name="lastName"  />
 
         <label for="email">Email:</label>
         <input
@@ -30,7 +30,7 @@
           id="email"
           name="email"
           autocomplete="email"
-          required
+          
         />
 
         <label for="contactNumber">Contact Number:</label>
@@ -38,31 +38,12 @@
           <select
             id="countryCode"
             name="countryCode"
-            style="width: 80px"
-            required
+            style="width: 235px"
+            
           >
-            <option value="+1">+1 (USA)</option>
-            <option value="+44">+44 (UK)</option>
-            <option value="+91">+91 (India)</option>
-            <option value="+86">+86 (China)</option>
-            <option value="+7">+7 (Russia)</option>
-            <option value="+81">+81 (Japan)</option>
-            <option value="+61">+61 (Australia)</option>
-            <option value="+33">+33 (France)</option>
-            <option value="+49">+49 (Germany)</option>
-            <option value="+39">+39 (Italy)</option>
-            <option value="+34">+34 (Spain)</option>
-            <option value="+55">+55 (Brazil)</option>
-            <option value="+52">+52 (Mexico)</option>
-            <option value="+27">+27 (South Africa)</option>
-            <option value="+57">+57 (Colombia)</option>
-            <option value="+20">+20 (Egypt)</option>
-            <option value="+90">+90 (Turkey)</option>
-            <option value="+62">+62 (Indonesia)</option>
-            <option value="+351">+351 (Portugal)</option>
-            <option value="+358">+358 (Finland)</option>
+            <option value="">---Select Country Code---</option>
           </select>
-          <input type="tel" id="contactNumber" name="contactNumber" required />
+          <input type="tel" id="contactNumber" name="contactNumber"  />
         </div>
 
         <label for="medicalRegistrationNumber"
@@ -72,14 +53,14 @@
           type="text"
           id="medicalRegistrationNumber"
           name="medicalRegistrationNumber"
-          required
+          
         />
 
         <label for="medicalBoard">Medical Board:</label>
-        <input type="text" id="medicalBoard" name="medicalBoard" required />
+        <input type="text" id="medicalBoard" name="medicalBoard"  />
 
         <label for="designation">Designation:</label>
-        <input type="text" id="designation" name="designation" required />
+        <input type="text" id="designation" name="designation"  />
 
         <label for="hospitalInstituteClinicName"
           >HOSPITAL / INSTITUTE / CLINIC NAME (with Address):</label
@@ -88,7 +69,7 @@
           type="text"
           id="hospitalInstituteClinicName"
           name="hospitalInstituteClinicName"
-          required
+          
         />
 
         <label for="profession">Select Profession:</label>
@@ -117,12 +98,6 @@
           <label for="pathology-number"
             >PATHOLOGY CONSULTANT IAC NUMBER :</label
           >
-          <input
-            type="text"
-            id="pathology-number"
-            name="pathology-number"
-            required
-          />
         </div>
 
         <div id="cytotechnologist-member-option-div" style="display: none">
@@ -140,12 +115,6 @@
           <label for="cytotechnologist-number"
             >CYTOTECHNOLOGIST IAC NUMBER :</label
           >
-          <input
-            type="text"
-            id="cytotechnologist-number"
-            name="cytotechnologist-number"
-            required
-          />
         </div>
 
         <label for="appearance-mode">PHYSICAL OR VIRTUAL:</label>
@@ -172,12 +141,9 @@
           <label for="physical-workshop">Workshop Topics :</label>
           <select id="physical-workshop" name="physical-workshop">
             <option value="select">--select--</option>
-            <option value="Conference">Cervical Cytology</option>
-            <option value="CMEConference">Breast Cytology</option>
-            <option value="ConferenceWorkshop">Cell Block Preparation And Anciliary Techniques </option>
-            <option value="CMEConferenceWorkshop">
-              CME + Conference + Workshop
-            </option>
+            <option value="CervicalCytology">Cervical Cytology</option>
+            <option value="BreastCytology">Breast Cytology</option>
+            <option value="CellBlockPreparationAndAnciliaryTechniques">Cell Block Preparation And Anciliary Techniques </option>
           </select>
         </div>
 
@@ -198,7 +164,7 @@
             id="accompanying-person"
             name="accompanying-person"
             inputmode="numeric"
-            required
+            
           />
         </div>
 

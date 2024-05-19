@@ -1,11 +1,16 @@
 import { physicalMode, virtualMode } from "./prices.js";
+import countryCodeData from "./country-code.js";
 
 $(document).ready(function () {
+  const form = $("#submitForm");
+  const countryCode = $("#countryCode");
   const professionType = $("#profession");
   const pathologyMemberOptionDiv = $("#pathology-member-option-div");
   const pathologyMemberTextDiv = $("#pathology-member-text-div");
+  const pathologyMemberTextDivInput = $("#pathology-number");
   const cytotechnologistOptionDiv = $("#cytotechnologist-member-option-div");
   const cytotechnologistTextDiv = $("#cytotechnologist-member-text-div");
+  const cytotechnologistTextDivInput = $("#cytotechnologist-number");
   const appearanceMode = $("#appearance-mode");
   const physicalConferenceDiv = $("#physical-conference-type-div");
   const virtualConferenceDiv = $("#virtual-conference-type-div");
@@ -13,18 +18,85 @@ $(document).ready(function () {
   const accompanyingPersonDiv = $("#accompanying-person-div");
   const totalPriceDiv = $("#total-price-div");
 
+  try {
+    form.submit(handleSubmit);
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      const formDataArray = form.serializeArray();
+      const formDataObject = {};
+      formDataArray.forEach((item) => {
+        formDataObject[item.name] = item.value;
+      });
+      const formDataJSON = JSON.stringify(formDataObject);
+      console.log(formDataJSON);
+      $.ajax({
+        type: "POST",
+        url: "http://localhost:8080/register-user",
+        contentType: "application/json",
+        data: formDataJSON,
+        success: function (response) {
+          console.log("Form submitted successfully:", response);
+        },
+        error: function (error) {
+          console.error("Error submitting form:", error);
+        },
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+
+  function callWithDUmmyData() {
+    $.ajax({
+      type: "POST",
+      url: "http://localhost:8080/register-user",
+      contentType: "application/json",
+      data: dummyData,
+      success: function (response) {
+        console.log("Form submitted successfully:", response);
+      },
+      error: function (error) {
+        console.error("Error submitting form:", error);
+      },
+    });
+  }
+
+  // callWithDUmmyData();
+
+  function createInput(inputAttributes) {
+    const inputElement = `<input type="text" id="${inputAttributes.id}" name="${inputAttributes.name}" required/>`;
+    $(`#${inputAttributes.target}`).append(inputElement);
+  }
+
+  function appendCountryCode() {
+    countryCodeData.sort((a, b) => (a.isoCode > b.isoCode ? 1 : -1));
+    countryCodeData.forEach((eachCountry) => {
+      const currentCountryOption = $("<option />");
+      currentCountryOption.attr({
+        value: `${eachCountry.dialCode}`,
+      });
+      currentCountryOption.text(
+        `${eachCountry.isoCode} ${eachCountry.dialCode}`
+      );
+      countryCode.append(currentCountryOption);
+    });
+  }
+
   function hideAllProfessionDiv() {
     pathologyMemberOptionDiv
       .find("option:first")
       .prop("selected", true)
       .change();
     pathologyMemberOptionDiv.hide();
+    pathologyMemberTextDivInput.remove();
     pathologyMemberTextDiv.hide();
     cytotechnologistOptionDiv
       .find("option:first")
       .prop("selected", true)
       .change();
     cytotechnologistOptionDiv.hide();
+    cytotechnologistTextDivInput.remove();
     cytotechnologistTextDiv.hide();
   }
 
@@ -64,6 +136,15 @@ $(document).ready(function () {
   function handlePathologyOptionChange(e) {
     e.preventDefault();
     const isMember = e.target.value;
+    if (isMember === "Yes") {
+      createInput({
+        id: "pathology-number",
+        name: "pathology-number",
+        target: "pathology-member-text-div",
+      });
+    } else {
+      $("#pathology-number").remove();
+    }
     toggleDiv(isMember, pathologyMemberTextDiv);
   }
 
@@ -77,6 +158,8 @@ $(document).ready(function () {
     const currentValue = Number(pressedKey);
     if (!Number.isNaN(currentValue)) {
       targetEle.val(previousValue + currentValue);
+    } else if (pressedKey === "Backspace") {
+      targetEle.val(previousValue.slice(0, previousValue.length - 1));
     }
   }
 
@@ -88,6 +171,15 @@ $(document).ready(function () {
   function handleCytotechnologistOptionChange(e) {
     e.preventDefault();
     const isMember = e.target.value;
+    if (isMember === "Yes") {
+      createInput({
+        id: "cytotechnologist-number",
+        name: "cytotechnologist-number",
+        target: "cytotechnologist-member-text-div",
+      });
+    } else {
+      $("#cytotechnologist-number").remove();
+    }
     toggleDiv(isMember, cytotechnologistTextDiv);
   }
 
@@ -152,9 +244,9 @@ $(document).ready(function () {
         const currentAccompanying = accompanyingPersonDiv
           .find("input:first")
           .val();
-          if(!(currentConferenceType in physicalMode)){
-            return
-          }
+        if (!(currentConferenceType in physicalMode)) {
+          return;
+        }
         currentAmount =
           physicalMode[currentConferenceType][currentProfessionSelected] +
           physicalMode[currentConferenceType].AccompanyingPerPerson *
@@ -162,8 +254,8 @@ $(document).ready(function () {
         break;
       case "virtualMode":
         currentConferenceType = $("#virtual-conference-type").val();
-        if(!(currentConferenceType in virtualMode)){
-          return
+        if (!(currentConferenceType in virtualMode)) {
+          return;
         }
         currentAmount =
           virtualMode[currentConferenceType][currentProfessionSelected];
@@ -237,6 +329,8 @@ $(document).ready(function () {
         toggleAccompanyingAndPrice(false);
     }
   }
+
+  appendCountryCode();
 
   professionType.change(handleProfessionTypeChange);
   pathologyMemberOptionDiv.change(handlePathologyOptionChange);
