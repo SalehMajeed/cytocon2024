@@ -16,7 +16,7 @@ app.use(
 );
 
 app.use(bodyParser.json());
-// app.use(express.urlencoded());
+app.use(express.urlencoded());
 
 app.get("/", async (req, res) => {
   try {
@@ -86,8 +86,8 @@ app.post("/update-transaction", async (req, res) => {
     await conn.execute(query, [transactionId]);
     res.send("Payment has been successfully done");
   } catch (err) {
-    console.error("Error inserting data:", err);
-    res.status(500).send("Error inserting data");
+    console.error("Error updating data:", err);
+    res.status(500).send("Error updating data");
   } finally {
     if (conn) {
       await conn.end();
