@@ -1,3 +1,9 @@
+DROP DATABASE IF EXISTS cytocon;
+
+CREATE DATABASE cytocon;
+
+USE cytocon;
+
 CREATE TABLE registrations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(10),
