@@ -4,8 +4,12 @@ require("dotenv").config();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const { openConnection } = require("./database/connection.js");
-const { generatePaymentUrl } = require("./util.js");
+const { generatePaymentUrl, decryptPaymentStatus } = require("./util.js");
+const priceObj = require("./prices.js");
 const port = 8080;
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 
 app.use(
   cors({
@@ -14,9 +18,6 @@ app.use(
     allowedHeaders: "Content-Type,Authorization",
   })
 );
-
-app.use(bodyParser.json());
-app.use(express.urlencoded());
 
 app.get("/", async (req, res) => {
   try {
@@ -31,42 +32,118 @@ app.get("/", async (req, res) => {
 app.post("/register-user", async (req, res) => {
   let conn = null;
   try {
+    const {
+      title,
+      firstName,
+      lastName,
+      email,
+      countryCode,
+      contactNumber,
+      medicalRegistrationNumber,
+      medicalBoard,
+      designation,
+      hospitalInstituteClinicName,
+      profession,
+      "pathology-member": pathologyMember,
+      "pathology-number": pathologyNumber,
+      "cytotechnologist-member": cytotechnologistMember,
+      "cytotechnologist-number": cytotechnologistNumber,
+      "appearance-mode": appearanceMode,
+      "physical-conference-type": physicalConferenceType,
+      "physical-workshop": physicalWorkshop,
+      "virtual-conference-type": virtualConferenceType,
+      "accompanying-person": accompanyingPerson,
+    } = req.body;
+    let currentAmount = null;
+    let haveIACNumber = "";
+
     conn = await openConnection();
     const { transactionID, paymentUrl } = await generatePaymentUrl(req);
-    const data = req.body;
-    const query = `
-      INSERT INTO registrations (
-          title, firstName, lastName, email, countryCode, contactNumber,
-          medicalRegistrationNumber, medicalBoard, designation, hospitalInstituteClinicName,
-          profession, pathologyMember, cytotechnologistMember, appearanceMode,
-          physicalConferenceType, physicalWorkshop, virtualConferenceType, accompanyingPerson, transactionId
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
-
-    const values = [
-      data.title,
-      data.firstName,
-      data.lastName,
-      data.email,
-      data.countryCode,
-      data.contactNumber,
-      data.medicalRegistrationNumber,
-      data.medicalBoard,
-      data.designation,
-      data.hospitalInstituteClinicName,
-      data.profession,
-      data["pathology-member"],
-      data["cytotechnologist-member"],
-      data["appearance-mode"],
-      data["physical-conference-type"],
-      data["physical-workshop"],
-      data["virtual-conference-type"],
-      parseInt(data["accompanying-person"]),
+    const queryFields = [
+      "title",
+      "firstName",
+      "lastName",
+      "email",
+      "countryCode",
+      "contactNumber",
+      "medicalRegistrationNumber",
+      "medicalBoard",
+      "designation",
+      "hospitalInstituteClinicName",
+      "profession",
+      "appearanceMode",
+      "accompanyingPerson",
+      "transactionId",
+    ];
+    const queryValues = [
+      title,
+      firstName,
+      lastName,
+      email,
+      countryCode,
+      contactNumber,
+      medicalRegistrationNumber,
+      medicalBoard,
+      designation,
+      hospitalInstituteClinicName,
+      profession,
+      appearanceMode,
+      accompanyingPerson,
       transactionID,
     ];
 
-    await conn.execute(query, values);
-    res.redirect(paymentUrl);
+    if (
+      profession === "PathologyConsultant" ||
+      profession === "Cytotechnologist"
+    ) {
+      if (pathologyMember === "Yes" || cytotechnologistMember === "Yes") {
+        const iacMemberNumber = pathologyNumber || cytotechnologistNumber;
+        queryFields.push("IACMemberNumber");
+        queryValues.push(iacMemberNumber);
+        haveIACNumber = "Yes";
+      } else {
+        haveIACNumber = "No";
+      }
+    }
+
+    if (appearanceMode === "physicalMode") {
+      queryFields.push("physicalConferenceType");
+      queryValues.push(physicalConferenceType);
+
+      if (physicalConferenceType.toLowerCase().includes("workshop")) {
+        queryFields.push("physicalWorkshop");
+        queryValues.push(physicalWorkshop);
+      }
+      currentAmount =
+        priceObj[appearanceMode][physicalConferenceType][
+          profession + haveIACNumber
+        ] +
+        priceObj[appearanceMode][physicalConferenceType].AccompanyingPerPerson *
+          accompanyingPerson;
+    } else {
+      queryFields.push("virtualConferenceType");
+      queryValues.push(virtualConferenceType);
+      currentAmount =
+        priceObj[appearanceMode][virtualConferenceType][
+          profession + haveIACNumber
+        ];
+    }
+
+    if (currentAmount === null) {
+      throw new Error("Provide Valid Information");
+    }
+    queryFields.push("payment");
+    queryValues.push(currentAmount);
+
+    const query = `
+    INSERT INTO registrations (${queryFields.join(", ")})
+    VALUES (${Array(queryValues.length).fill("?").join(", ")})
+    `;
+
+    console.log(query, queryValues);
+
+    await conn.execute(query, queryValues);
+    res.status(201).send("Done");
   } catch (err) {
     console.error("Error inserting data:", err);
     res.status(500).send("Error inserting data");
@@ -81,7 +158,12 @@ app.post("/update-transaction", async (req, res) => {
   let conn = null;
   try {
     conn = await openConnection();
-    const transactionId = req.body.transactionId;
+    console.log(req.body);
+    if (!req.body.response) {
+      throw new Error("empty response");
+    }
+    const data = await decryptPaymentStatus(req.body.response);
+    console.log(data);
     const query = `UPDATE registrations SET paid = TRUE WHERE transactionId = ?`;
     await conn.execute(query, [transactionId]);
     res.send("Payment has been successfully done");

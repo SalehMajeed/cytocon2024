@@ -12,7 +12,7 @@ function encryptEas(data, key, iv) {
     format: format.Hex,
   });
 
-  console.log("78", encrypted.toString());
+  // console.log("78", encrypted.toString());
   return encrypted.toString();
 }
 

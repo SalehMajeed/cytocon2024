@@ -58,7 +58,7 @@ async function generatePaymentUrl(req) {
   try {
     const currentDate = generateDate(req);
     const data = {
-      mid: "108",
+      mid: process.env.MID,
       amount: "2.00",
       merchantTransactionId: process.env.MERCHANT_ID,
       transactionDate: currentDate,
@@ -73,7 +73,7 @@ async function generatePaymentUrl(req) {
       udf8: "",
       udf9: "",
       udf10: "",
-      ru: "https://pay1.getepay.in:8443/getepayPortal/pg/pgPaymentResponse",
+      ru: process.env.RU_URL,
       callbackUrl: process.env.CALLBACK_URL,
       currency: "INR",
       paymentMode: "ALL",
@@ -89,8 +89,7 @@ async function generatePaymentUrl(req) {
       GeepayTerminalId: process.env.VPA,
       GetepayKey: process.env.GET_E_PAY_KEY,
       GetepayIV: process.env.GET_E_PAY_IV,
-      GetepayUrl:
-        "https://pay1.getepay.in:8443/getepayPortal/pg/generateInvoice",
+      GetepayUrl: process.env.GET_E_PAY_URL,
     };
 
     const { paymentId: transactionID, paymentUrl } = await getepayPortal(
