@@ -268,7 +268,9 @@ $(document).ready(function () {
 
   function toggleAccompanyingAndPrice(shouldShow) {
     if (shouldShow) {
-      accompanyingPersonDiv.show();
+      if (appearanceMode.val() === "physicalMode") {
+        accompanyingPersonDiv.show();
+      }
       totalPriceDiv.show();
       calculateTotalAmount();
     } else {
