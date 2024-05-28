@@ -32,11 +32,12 @@ $(document).ready(function () {
       console.log(formDataJSON);
       $.ajax({
         type: "POST",
-        url: "http://localhost:8080/register-user",
+        url: "http://ec2-3-25-201-197.ap-southeast-2.compute.amazonaws.com:8080",
         contentType: "application/json",
         data: formDataJSON,
         success: function (response) {
           console.log("Form submitted successfully:", response);
+          alert("Form submitted successfully");
         },
         error: function (error) {
           console.error("Error submitting form:", error);
@@ -50,7 +51,7 @@ $(document).ready(function () {
   function callWithDUmmyData() {
     $.ajax({
       type: "POST",
-      url: "http://localhost:8080/register-user",
+      url: "http://ec2-3-25-201-197.ap-southeast-2.compute.amazonaws.com:8080",
       contentType: "application/json",
       data: dummyData,
       success: function (response) {
