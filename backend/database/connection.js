@@ -1,4 +1,5 @@
-const { createConnection } = require("mysql2/promise");
+const pgp = require("pg-promise")();
+// const { createConnection } = require("mysql2/promise");
 
 const openConnection = async () => {
   const config = {
@@ -11,7 +12,18 @@ const openConnection = async () => {
     queueLimit: 0,
   };
 
-  const conn = await createConnection(config);
+  const cPanelConfig = {
+    host: process.env.CPANEL_DB_HOST,
+    user: process.env.CPANEL_DB_USER,
+    password: process.env.CPANEL_DB_PASSWORD,
+    database: process.env.CPANEL_DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+  };
+
+  // const conn = await createConnection({connect});
+  const conn = await pgp({ connectionString: process.env.POSTGRESQL });
   return conn;
 };
 

@@ -137,20 +137,16 @@ app.post("/register-user", async (req, res) => {
 
     const query = `
     INSERT INTO registrations (${queryFields.join(", ")})
-    VALUES (${Array(queryValues.length).fill("?").join(", ")})
+    VALUES (${queryValues.map((_, i) => `$${i + 1}`).join(", ")})
     `;
 
     console.log(query, queryValues);
 
-    await conn.execute(query, queryValues);
+    await conn.none(query, queryValues);
     res.status(201).send("Done");
   } catch (err) {
     console.error("Error inserting data:", err);
     res.status(500).send("Error inserting data");
-  } finally {
-    if (conn) {
-      await conn.end();
-    }
   }
 });
 
@@ -164,16 +160,25 @@ app.post("/update-transaction", async (req, res) => {
     }
     const data = await decryptPaymentStatus(req.body.response);
     console.log(data);
-    const query = `UPDATE registrations SET paid = TRUE WHERE transactionId = ?`;
-    await conn.execute(query, [transactionId]);
+    const query = `UPDATE registrations SET paid = TRUE WHERE transactionId = $1`;
+    await conn.none(query, [transactionId]);
     res.send("Payment has been successfully done");
   } catch (err) {
     console.error("Error updating data:", err);
     res.status(500).send("Error updating data");
-  } finally {
-    if (conn) {
-      await conn.end();
-    }
+  }
+});
+
+app.post("/get-user", async (req, res) => {
+  let conn = null;
+  try {
+    conn = await openConnection();
+    const query = `SELECT * FROM registrations`;
+    const data = await conn.any(query);
+    res.status(200).send(data);
+  } catch (err) {
+    console.error("Error while fetching users", err);
+    res.status(500).send("Error while fetching users");
   }
 });
 
