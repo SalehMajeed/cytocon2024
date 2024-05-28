@@ -29,6 +29,10 @@ app.get("/", async (req, res) => {
   }
 });
 
+app.get("/greet-me", (req, res) => {
+  res.send("Hello boy");
+});
+
 app.post("/register-user", async (req, res) => {
   let conn = null;
   try {
