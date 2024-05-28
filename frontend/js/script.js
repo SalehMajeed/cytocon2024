@@ -31,10 +31,10 @@ $(document).ready(function () {
       const formDataJSON = JSON.stringify(formDataObject);
       console.log(formDataJSON);
       $.ajax({
-        type: "POST",
-        url: "https://ec2-3-25-201-197.ap-southeast-2.compute.amazonaws.com:8080",
-        contentType: "application/json",
-        data: formDataJSON,
+        type: "GET",
+        url: "http://ec2-3-25-196-254.ap-southeast-2.compute.amazonaws.com:8080/",
+        // contentType: "application/json",
+        // data: formDataJSON,
         success: function (response) {
           console.log("Form submitted successfully:", response);
           alert("Form submitted successfully");
@@ -47,23 +47,6 @@ $(document).ready(function () {
   } catch (err) {
     console.log(err);
   }
-
-  function callWithDUmmyData() {
-    $.ajax({
-      type: "POST",
-      url: "https://ec2-3-25-201-197.ap-southeast-2.compute.amazonaws.com:8080",
-      contentType: "application/json",
-      data: dummyData,
-      success: function (response) {
-        console.log("Form submitted successfully:", response);
-      },
-      error: function (error) {
-        console.error("Error submitting form:", error);
-      },
-    });
-  }
-
-  // callWithDUmmyData();
 
   function createInput(inputAttributes) {
     const inputElement = `<input type="text" id="${inputAttributes.id}" name="${inputAttributes.name}" required/>`;
