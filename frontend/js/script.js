@@ -32,7 +32,7 @@ $(document).ready(function () {
       console.log(formDataJSON);
       $.ajax({
         type: "POST",
-        url: "http://ec2-3-25-201-197.ap-southeast-2.compute.amazonaws.com:8080",
+        url: "https://ec2-3-25-201-197.ap-southeast-2.compute.amazonaws.com:8080",
         contentType: "application/json",
         data: formDataJSON,
         success: function (response) {
