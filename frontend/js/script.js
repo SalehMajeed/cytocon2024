@@ -36,8 +36,6 @@ $(document).ready(function () {
         contentType: "application/json",
         data: formDataJSON,
         success: function (response) {
-          console.log("Form submitted successfully:", response);
-          alert("Form submitted successfully");
         },
         error: function (error) {
           console.error("Error submitting form:", error);
