@@ -31,10 +31,10 @@ $(document).ready(function () {
       const formDataJSON = JSON.stringify(formDataObject);
       console.log(formDataJSON);
       $.ajax({
-        type: "GET",
-        url: "http://ec2-3-25-196-254.ap-southeast-2.compute.amazonaws.com:8080/",
-        // contentType: "application/json",
-        // data: formDataJSON,
+        type: "POST",
+        url: "https://bigbluelocal.online/register-user",
+        contentType: "application/json",
+        data: formDataJSON,
         success: function (response) {
           console.log("Form submitted successfully:", response);
           alert("Form submitted successfully");
