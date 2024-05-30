@@ -26,4 +26,5 @@ CREATE TABLE registrations (
     transactionId VARCHAR(36),
     payment DECIMAL(10, 2),
     paid BOOLEAN DEFAULT FALSE
+    paymentDate TIMESTAMP WITH TIME ZONE;
 );

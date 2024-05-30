@@ -54,18 +54,19 @@ function getepayPortal(data, config) {
   });
 }
 
-async function generatePaymentUrl(req) {
+async function generatePaymentUrl(req, requestData) {
   try {
+    const { currentAmount, contactNumber, name, email } = requestData;
     const currentDate = generateDate(req);
     const data = {
       mid: process.env.MID,
-      amount: "2.00",
+      amount: currentAmount,
       merchantTransactionId: process.env.MERCHANT_ID,
       transactionDate: currentDate,
       terminalId: process.env.TERMINAL_ID,
-      udf1: "7665730788",
-      udf2: "saleh.majeed8@gmail.com",
-      udf3: "saleh",
+      udf1: contactNumber,
+      udf2: name,
+      udf3: email,
       udf4: "",
       udf5: "",
       udf6: "",
@@ -75,8 +76,8 @@ async function generatePaymentUrl(req) {
       udf10: "",
       ru: process.env.RU_URL,
       callbackUrl: process.env.CALLBACK_URL,
-      currency: "INR",
-      paymentMode: "ALL",
+      currency: process.env.CURRENCY_TYPE,
+      paymentMode: process.env.PAYMENT_MODE,
       bankId: "",
       txnType: "single",
       productType: "IPG",
@@ -85,7 +86,7 @@ async function generatePaymentUrl(req) {
     };
 
     const config = {
-      GetepayMid: 108,
+      GetepayMid: process.env.MID,
       GeepayTerminalId: process.env.VPA,
       GetepayKey: process.env.GET_E_PAY_KEY,
       GetepayIV: process.env.GET_E_PAY_IV,

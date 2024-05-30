@@ -19,16 +19,6 @@ app.use(
   })
 );
 
-app.get("/", async (req, res) => {
-  try {
-    const result = await generatePaymentUrl(req);
-    res.redirect(result.paymentUrl);
-    console.log(result);
-  } catch (err) {
-    console.log(err.Error);
-  }
-});
-
 app.get("/greet-me", (req, res) => {
   res.send("Hello boy");
 });
@@ -62,7 +52,6 @@ app.post("/register-user", async (req, res) => {
     let haveIACNumber = "";
 
     conn = await openConnection();
-    const { transactionID, paymentUrl } = await generatePaymentUrl(req);
     const queryFields = [
       "title",
       "firstName",
@@ -77,7 +66,6 @@ app.post("/register-user", async (req, res) => {
       "profession",
       "appearanceMode",
       "accompanyingPerson",
-      "transactionId",
     ];
     const queryValues = [
       title,
@@ -93,7 +81,6 @@ app.post("/register-user", async (req, res) => {
       profession,
       appearanceMode,
       accompanyingPerson,
-      transactionID,
     ];
 
     if (
@@ -136,6 +123,23 @@ app.post("/register-user", async (req, res) => {
     if (currentAmount === null) {
       throw new Error("Provide Valid Information");
     }
+
+    const requestData = {
+      currentAmount,
+      contactNumber,
+      name: `${firstName} ${lastName}`,
+      email
+    }
+
+    const { transactionID, paymentUrl } = await generatePaymentUrl(req, requestData);
+    const paymentDate = moment().utc().format('YYYY-MM-DD HH:mm:ss');
+
+    queryFields.push('paymentDate');
+    queryValues.push(paymentDate);
+
+    queryFields.push("transactionId");
+    queryValues.push(transactionID);
+
     queryFields.push("payment");
     queryValues.push(currentAmount);
 
@@ -144,10 +148,9 @@ app.post("/register-user", async (req, res) => {
     VALUES (${queryValues.map((_, i) => `$${i + 1}`).join(", ")})
     `;
 
-    console.log(query, queryValues);
-
     await conn.none(query, queryValues);
-    res.status(201).send("Done");
+    res.redirect(paymentUrl);
+    // res.status(201).send("Done");
   } catch (err) {
     console.error("Error inserting data:", err);
     res.status(500).send("Error inserting data");
@@ -158,7 +161,7 @@ app.post("/update-transaction", async (req, res) => {
   let conn = null;
   try {
     conn = await openConnection();
-    console.log(req.body);
+    console.log("from update transaction", req.body);
     if (!req.body.response) {
       throw new Error("empty response");
     }
@@ -173,7 +176,7 @@ app.post("/update-transaction", async (req, res) => {
   }
 });
 
-app.post("/get-user", async (req, res) => {
+app.post("/get-users", async (req, res) => {
   let conn = null;
   try {
     conn = await openConnection();
