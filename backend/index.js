@@ -150,8 +150,8 @@ app.post("/register-user", async (req, res) => {
     `;
 
     await conn.none(query, queryValues);
-    res.redirect(paymentUrl);
-    // res.status(201).send("Done");
+    // res.redirect(paymentUrl);
+    res.status(201).send(paymentUrl);
   } catch (err) {
     console.error("Error inserting data:", err);
     res.status(500).send("Error inserting data");
