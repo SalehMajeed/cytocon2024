@@ -4,9 +4,10 @@ require("dotenv").config();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const { openConnection } = require("./database/connection.js");
+const moment = require("moment-timezone");
 const { generatePaymentUrl, decryptPaymentStatus } = require("./util.js");
 const priceObj = require("./prices.js");
-const port = 8080;
+const port = process.env.PORT || 8080;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
